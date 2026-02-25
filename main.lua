@@ -33,13 +33,6 @@ function love.load(_, arg)
 	local part = argv.p or argv.part or "1"
 	local filename = argv.f or argv.file
 
-	if argv.v or argv.verbose then
-		for k, v in pairs(argv) do
-			print(k, v)
-		end
-		print(day, part, filename)
-	end
-
 	if day.load then
 		day.load(argv)
 	end
@@ -63,6 +56,13 @@ function love.load(_, arg)
 		love.system.setClipboardText(result)
 	else
 		result = "???"
+	end
+
+	if argv.v or argv.verbose then
+		for k, v in pairs(argv) do
+			print(k, v)
+		end
+		print(filename)
 	end
 end
 
