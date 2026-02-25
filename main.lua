@@ -9,7 +9,7 @@ local function reset_drop(drop, init)
 	if init then
 		drop.w = love.graphics.getFont():getWidth(result)
 		drop.h = love.graphics.getFont():getHeight()
-		drop.y = random(0, 600)
+		drop.y = random(-600, 600)
 	else
 		drop.y = -drop.h
 	end
