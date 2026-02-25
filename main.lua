@@ -27,7 +27,7 @@ function love.load(_, arg)
 
 		if a:sub(1, 1) == "-" then
 			if a:sub(2, 2) == "-" then
-				assert(#a ~= 3)
+				assert(#a > 3)
 				a = a:sub(3)
 				a = a == "" and "--" or a
 			elseif #a > 2 then
@@ -51,6 +51,7 @@ function love.load(_, arg)
 	day = require("d" .. (argv.d or argv.day))
 	local part = argv.p or argv.part or "1"
 	local filename = argv.f or argv.file
+	local nofile = argv.nofile or argv.f == "-"
 
 	if day.load then
 		day.load(argv)
@@ -69,7 +70,7 @@ function love.load(_, arg)
 
 	part = part:sub(1, 1):match("%d") == nil and part or "p" .. part
 	filename = filename or ("inputs/d" .. argv.d .. ".txt")
-	result = day[part] and day[part](io.open(filename))
+	result = day[part] and day[part](not nofile and assert(io.open(filename)))
 
 	if result then
 		love.system.setClipboardText(result)
