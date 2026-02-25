@@ -48,12 +48,7 @@ local function get_counts(s)
 	end
 
 	table.sort(letter_counts, function(a, b)
-		--tried to implement this in one line, failed
-		if a[2] == b[2] then
-			return a[1] < b[1]
-		else
-			return a[2] > b[2]
-		end
+		return a[2] == b[2] and a[1] < b[1] or a[2] > b[2]
 	end)
 
 	return letter_counts
