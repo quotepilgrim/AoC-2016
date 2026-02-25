@@ -41,7 +41,7 @@ function M.p2(file)
 		for i = 1, #col, 3 do
 			local a, b, c = col[i], col[i + 1], col[i + 2]
 
-			if not (a + b <= c or a + c <= b or b + c <= a) then
+			if not (a > b + c or b > a + c or c > a + b) then
 				result = result + 1
 			end
 		end
