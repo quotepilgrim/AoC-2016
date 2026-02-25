@@ -1,9 +1,8 @@
-local result, day
+local result, day, fg, bg
 local argv = {}
 local drops = {}
 local random = love.math.random
-local max = math.max
-local sqrt = math.sqrt
+local max, sqrt = math.max, math.sqrt
 
 local function reset_drop(drop, init)
 	if init then
@@ -48,10 +47,36 @@ function love.load(_, arg)
 		end
 	end
 
+	local function dark_color()
+		local t = {}
+		for _ = 1, 3 do
+			table.insert(t, random() / 3)
+		end
+		return t
+	end
+
+	local function bright_color()
+		local t = {}
+		for _ = 1, 3 do
+			table.insert(t, (random() / 2.5 + 0.6))
+		end
+		return t
+	end
+
 	day = require("d" .. (argv.d or argv.day))
 	local part = argv.p or argv.part or "1"
 	local filename = argv.f or argv.file
 	local nofile = argv.nofile or argv.f == "-"
+
+	local color = argv.color or (not argv.mono and random() < 0.25)
+	local bright = argv.bright or (not argv.dark and random() < 0.1)
+	print(color, bright)
+	bg = color and dark_color() or { 0, 0, 0 }
+	fg = color and bright_color() or { 1, 1, 1 }
+
+	if bright then
+		bg, fg = fg, bg
+	end
 
 	if day.load then
 		day.load(argv)
@@ -93,8 +118,9 @@ function love.load(_, arg)
 end
 
 function love.draw()
+	love.graphics.clear(bg)
 	for _, drop in ipairs(drops) do
-		love.graphics.setColor(1, 1, 1, drop.opacity)
+		love.graphics.setColor(fg[1], fg[2], fg[3], drop.opacity)
 		love.graphics.print(result, drop.x, drop.y, 0, drop.scale)
 	end
 end
