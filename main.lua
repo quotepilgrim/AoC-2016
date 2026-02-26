@@ -2,7 +2,7 @@ local result, day, fg, bg
 local argv = {}
 local drops = {}
 local random = love.math.random
-local max, sqrt = math.max, math.sqrt
+local max = math.max
 
 local function reset_drop(drop, init)
 	if init then
@@ -26,7 +26,10 @@ function love.load(_, arg)
 
 		if a:sub(1, 1) == "-" then
 			if a:sub(2, 2) == "-" then
-				assert(#a > 3)
+				if #a == 2 then
+					break
+				end
+				assert(#a ~= 3)
 				a = a:sub(3)
 				a = a == "" and "--" or a
 			elseif #a > 2 then
@@ -55,7 +58,7 @@ function love.load(_, arg)
 		return t
 	end
 
-	local function bright_color()
+	local function light_color()
 		local t = {}
 		for _ = 1, 3 do
 			table.insert(t, (random() / 2.5 + 0.6))
@@ -63,18 +66,22 @@ function love.load(_, arg)
 		return t
 	end
 
+	argv.day = argv.day or argv.d
+	argv.part = argv.part or argv.p
+	argv.file = argv.file or argv.f
+	argv.input = argv.input or argv.i
+
 	day = require("d" .. (argv.d or argv.day))
-	local part = argv.p or argv.part or "1"
-	local filename = argv.f or argv.file
-	local nofile = argv.nofile or argv.f == "-"
+	local part = argv.part or "1"
+	local filename = argv.file
+	local nofile = argv.nofile or argv.input
 
 	local color = argv.color or (not argv.mono and random() < 0.25)
-	local bright = argv.bright or (not argv.dark and random() < 0.1)
-	print(color, bright)
+	local light = argv.light or (not argv.dark and random() < 0.1)
 	bg = color and dark_color() or { 0, 0, 0 }
-	fg = color and bright_color() or { 1, 1, 1 }
+	fg = color and light_color() or { 1, 1, 1 }
 
-	if bright then
+	if light then
 		bg, fg = fg, bg
 	end
 
@@ -114,6 +121,7 @@ function love.load(_, arg)
 			print(k, v)
 		end
 		print(filename)
+		print(love.filesystem.isFused())
 	end
 end
 
