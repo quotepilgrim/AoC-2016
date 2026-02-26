@@ -24,7 +24,7 @@ local function get_counts(t)
 	local counts = {}
 	local counts_t = {}
 
-	for i, v in ipairs(t) do
+	for _, v in ipairs(t) do
 		if not counts[v] then
 			counts[v] = 1
 		else
