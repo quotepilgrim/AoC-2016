@@ -1,19 +1,20 @@
-local result, day, fg, bg
+local result, day, fg, bg, font, small_font, big_font
 local argv = {}
 local drops = {}
 local random = love.math.random
 local max = math.max
+local ww, wh = 800, 600
 
 local function reset_drop(drop, init)
 	if init then
 		drop.w = love.graphics.getFont():getWidth(result)
 		drop.h = love.graphics.getFont():getHeight()
-		drop.y = random(-600, 600)
+		drop.y = random(-wh, wh)
 	else
 		drop.y = -drop.h
 	end
 
-	drop.x = random(-drop.w, 800)
+	drop.x = random(-drop.w, ww)
 	drop.speed = random() * 400
 	drop.opacity = drop.speed / 400
 	drop.scale = max(0.15, drop.opacity ^ 2)
@@ -98,7 +99,9 @@ function love.load(_, arg)
 	end
 
 	love.window.setTitle(love.window.getTitle() .. " - Day " .. argv.d .. " Part " .. part)
-	love.graphics.setFont(love.graphics.newFont(48))
+	small_font = love.graphics.newFont(48)
+	big_font = love.graphics.newFont(128)
+	love.graphics.setFont(small_font)
 
 	part = part:sub(1, 1):match("%d") == nil and part or "p" .. part
 	filename = filename or ("inputs/d" .. argv.d .. ".txt")
@@ -136,7 +139,7 @@ end
 function love.update(dt)
 	for _, drop in ipairs(drops) do
 		drop.y = drop.y + drop.speed * dt
-		if drop.y > 600 then
+		if drop.y > wh then
 			reset_drop(drop)
 		end
 	end
@@ -145,7 +148,32 @@ end
 function love.keypressed(key)
 	if key == "escape" then
 		love.event.quit()
+	elseif key == "f" then
+		local flags = select(3, love.window.getMode())
+
+		love.window.setMode(
+			800,
+			600,
+			{ fullscreen = not flags.fullscreen, fullscreentype = "desktop", resizable = true }
+		)
+
+		love.resize(love.window:getMode())
+
+		if not flags.fullscreen then
+			love.graphics.setFont(big_font)
+		else
+			love.graphics.setFont(small_font)
+		end
+
+		for _, drop in ipairs(drops) do
+			reset_drop(drop, true)
+		end
 	end
 
 	return day.keypressed and day.keypressed(key)
+end
+
+function love.resize(w, h)
+	ww = w
+	wh = h
 end
