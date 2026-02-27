@@ -7,9 +7,7 @@ local function decompress(s)
 	while i <= #s do
 		local c = s:sub(i, i)
 
-		if c == "(" then
-			::again::
-
+		while c == "(" do
 			local marker = ""
 			i = i + 1
 
@@ -31,10 +29,6 @@ local function decompress(s)
 			for _ = 1, tonumber(r) do
 				table.insert(result, str)
 				c = s:sub(i, i)
-			end
-
-			if c == "(" then
-				goto again -- yes, yes, I know
 			end
 		end
 
