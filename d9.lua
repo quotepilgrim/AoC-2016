@@ -45,7 +45,7 @@ local function decompress_v2(s)
 
 	while true do
 		local substr = s:sub(i)
-		local a, b, pat = substr:find("(%(%d+x%d+%))")
+		local a, b = substr:find("(%(%d+x%d+%))")
 
 		if not a then
 			result = result + #substr
@@ -55,10 +55,8 @@ local function decompress_v2(s)
 		local l, r = substr:match("(%d+)x(%d+)")
 		local substr2 = substr:sub(b + 1, b + l)
 
-		result = result + l * r + (a - 1)
-		-- I don't even know why this is the right math but I won't question it.
-		result = result + decompress_v2(substr2) * (r - 1) - #substr2 * r
-
+		-- I don't even know for sure why this is the right math but I won't question it.
+		result = result + (a - 1) + l * r + decompress_v2(substr2) * (r - 1) - #substr2 * r
 		i = i + b
 	end
 
